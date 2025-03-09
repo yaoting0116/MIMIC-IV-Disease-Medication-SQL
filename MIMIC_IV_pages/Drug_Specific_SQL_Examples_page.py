@@ -85,6 +85,9 @@ def drug_execute_all_all(indices, alias_map, data_dict):
                 log_message(i, "✅ SELECT complete: Query executed successfully.")
     st.rerun()
 
+def make_anchor(text):
+    return re.sub(r'\W+', '', text.lower().replace(" ", "_"))
+
 # --- Drug-Specific Web Display Function ---
 def show():
     pd.set_option('future.no_silent_downcasting', True)
@@ -251,6 +254,8 @@ FROM temp_seven;"""
         
         with main_tab1:
             for i in range(0, 1):
+                anchor_id = make_anchor(query_names[i])
+                st.markdown(f"<a name='{anchor_id}'></a>", unsafe_allow_html=True)
                 st.subheader(f"🔎 {query_names[i]}")
                 num_lines = st.session_state[f"drug_last_query_{i}"].count("\n") + 1
                 input_height = max(100, num_lines * 25)
@@ -263,7 +268,6 @@ FROM temp_seven;"""
                     st.session_state[f"drug_last_query_{i}"] = sql_query
                 if st.button(f"👉 Execute SQL", key=f"drug_btn_{i}"):
                     drug_execute_all_all([i], alias_map, data_dict)
-                # 顯示兩個子標籤頁：Data output 與 Messages
                 tabs = st.tabs(["Data output", "Messages"])
                 with tabs[0]:
                     if isinstance(st.session_state[f"drug_query_result_{i}"], pd.DataFrame):
@@ -276,6 +280,8 @@ FROM temp_seven;"""
             if st.button("▶️ Execute All SQL Sequentially 📙"):
                 drug_execute_all_all(range(1, 8), alias_map, data_dict)
             for i in range(1, 8):
+                anchor_id = make_anchor(query_names[i])
+                st.markdown(f"<a name='{anchor_id}'></a>", unsafe_allow_html=True)
                 st.subheader(f"🔎 {query_names[i]}")
                 num_lines = st.session_state[f"drug_last_query_{i}"].count("\n") + 1
                 input_height = max(100, num_lines * 25)
