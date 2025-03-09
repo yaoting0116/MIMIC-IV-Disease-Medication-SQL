@@ -2,6 +2,8 @@
 
 This webpage provides the necessary MIMIC IV 2.1 data tables related to specific diseases and medications. It is designed to help you better understand the column information in these medical datasets for similar academic research.
 
+For information, see [live demo](https://mimic-iv-disease-medication-sql-uwu-ting.streamlitapp.com/).
+
 ## Features
 
 - **Comprehensive Data Tables:** Access essential data tables from the MIMIC IV 2.1 dataset that are relevant to diseases and medications.
