@@ -271,6 +271,7 @@ def execute_all_all(indices, alias_map, data_dict):
 
 # --- Disease-Specific Web Display Function ---
 def show():
+    pd.set_option('future.no_silent_downcasting', True)
     # Create an HTML anchor for "Back to Top"
     st.markdown("<a name='top'></a>", unsafe_allow_html=True)
     st.markdown("")
