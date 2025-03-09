@@ -99,7 +99,7 @@ def show():
     </style>
     """, unsafe_allow_html=True)
 
-    PKL_DIR = "MIMIC IV 2.1 Specific Disease & Medication SQL Example Webpage/MIMIC_IV_data/drugs_data"
+    PKL_DIR = "MIMIC_IV_data/drugs_data"
 
     if "drug_data_dict" not in st.session_state:
         st.session_state["drug_data_dict"] = {}
