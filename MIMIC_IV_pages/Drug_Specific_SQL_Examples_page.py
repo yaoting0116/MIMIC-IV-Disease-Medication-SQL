@@ -87,6 +87,7 @@ def drug_execute_all_all(indices, alias_map, data_dict):
 
 # --- Drug-Specific Web Display Function ---
 def show():
+    pd.set_option('future.no_silent_downcasting', True)
     st.markdown("<a name='top'></a>", unsafe_allow_html=True)
     st.markdown("")
     st.markdown("")
