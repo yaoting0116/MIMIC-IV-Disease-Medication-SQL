@@ -286,7 +286,7 @@ def show():
     """, unsafe_allow_html=True)
 
     # Directory containing the PKL disease data files
-    PKL_DIR = f"MIMIC IV 2.1 Specific Disease & Medication SQL Example Webpage/MIMIC_IV_data/diseases_data"
+    PKL_DIR = f"MIMIC_IV_data/diseases_data"
     
     # Initialize session_state data dictionary if not present
     if "data_dict" not in st.session_state:
