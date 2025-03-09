@@ -24,15 +24,12 @@ def convert_time_columns(df):
                 log_message(-1, f"Warning: Failed to convert column '{col}': {e}")
     return df
 
-# Simulate DELETE statements
-# 目前僅支援 "DELETE FROM <table> WHERE <condition>" 格式
 def simulate_delete(q, data_dict, query_index):
     pattern_simple = r"DELETE\s+FROM\s+(\w+)\s+WHERE\s+(.+)"
     match_simple = re.match(pattern_simple, q, re.IGNORECASE)
     if match_simple:
         table_name = match_simple.group(1)
         condition = match_simple.group(2)
-        # 將 SQL 的 "=" 轉換成 Pandas 的 "==" 語法
         condition = condition.replace(" = ", " == ")
         if table_name in data_dict:
             df_table = data_dict[table_name]
@@ -51,7 +48,6 @@ def simulate_delete(q, data_dict, query_index):
 # --- Drug-Specific SQL Execution Function ---
 def drug_execute_all_all(indices, alias_map, data_dict):
     for i in indices:
-        # 初始化此查詢的訊息記錄
         st.session_state[f"drug_message_{i}"] = []
         sql_query = st.session_state[f"drug_last_query_{i}"]
         for original, alias in alias_map.items():
@@ -84,9 +80,6 @@ def drug_execute_all_all(indices, alias_map, data_dict):
                 st.session_state[f"drug_query_result_{i}"] = result_df
                 log_message(i, "✅ SELECT complete: Query executed successfully.")
     st.rerun()
-
-def make_anchor(text):
-    return re.sub(r'\W+', '', text.lower().replace(" ", "_"))
 
 # --- Drug-Specific Web Display Function ---
 def show():
@@ -254,8 +247,6 @@ FROM temp_seven;"""
         
         with main_tab1:
             for i in range(0, 1):
-                anchor_id = make_anchor(query_names[i])
-                st.markdown(f"<a name='{anchor_id}'></a>", unsafe_allow_html=True)
                 st.subheader(f"🔎 {query_names[i]}")
                 num_lines = st.session_state[f"drug_last_query_{i}"].count("\n") + 1
                 input_height = max(100, num_lines * 25)
@@ -280,8 +271,6 @@ FROM temp_seven;"""
             if st.button("▶️ Execute All SQL Sequentially 📙"):
                 drug_execute_all_all(range(1, 8), alias_map, data_dict)
             for i in range(1, 8):
-                anchor_id = make_anchor(query_names[i])
-                st.markdown(f"<a name='{anchor_id}'></a>", unsafe_allow_html=True)
                 st.subheader(f"🔎 {query_names[i]}")
                 num_lines = st.session_state[f"drug_last_query_{i}"].count("\n") + 1
                 input_height = max(100, num_lines * 25)
