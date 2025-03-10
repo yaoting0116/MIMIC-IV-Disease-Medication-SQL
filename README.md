@@ -24,5 +24,5 @@ It needs Python version >= 3.11.2.
 
 ```bash
 pip install -r requirements.txt
-streamlit run MIMIC IV 2.1 EX web.py
+streamlit run Introduction.py
 ```
