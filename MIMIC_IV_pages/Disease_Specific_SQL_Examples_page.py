@@ -272,10 +272,6 @@ def execute_all_all(indices, alias_map, data_dict):
 # --- Disease-Specific Web Display Function ---
 def show():
     pd.set_option('future.no_silent_downcasting', True)
-    # Create an HTML anchor for "Back to Top"
-    st.markdown("<a name='top'></a>", unsafe_allow_html=True)
-    st.markdown("")
-    st.markdown("")
     # Custom CSS for button styling
     st.markdown("""
     <style>
@@ -801,7 +797,10 @@ SELECT * FROM temp_twenty_three;"""
         st.success(f"✅ Successfully loaded {len(table_info)} tables!")
         st.subheader("📋 Queryable Tables")
         st.dataframe(table_info_df, use_container_width=True)
-
+        # Create an HTML anchor for "Back to Top"
+        st.markdown("<a name='top'></a>", unsafe_allow_html=True)
+        st.markdown("")
+        st.markdown("")
         # Two main tabs: one for Table Test and one for Specific Diseases Query Steps
         tab1, tab2 = st.tabs(["Table Test", "Specific Diseases Query Steps"])
         
