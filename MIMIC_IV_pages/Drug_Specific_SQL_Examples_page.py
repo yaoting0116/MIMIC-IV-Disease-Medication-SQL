@@ -84,9 +84,6 @@ def drug_execute_all_all(indices, alias_map, data_dict):
 # --- Drug-Specific Web Display Function ---
 def show():
     pd.set_option('future.no_silent_downcasting', True)
-    st.markdown("<a name='top'></a>", unsafe_allow_html=True)
-    st.markdown("")
-    st.markdown("")
     st.markdown("""
     <style>
     div.stButton > button {
@@ -242,7 +239,10 @@ FROM temp_seven;"""
     if data_dict:
         st.subheader("📋 Queryable Tables")
         st.dataframe(table_info_df, use_container_width=True)
-
+        # Create an HTML anchor for "Back to Top"
+        st.markdown("<a name='top'></a>", unsafe_allow_html=True)
+        st.markdown("")
+        st.markdown("")
         main_tab1, main_tab2 = st.tabs(["Table Test", "Drug-Specific Query Steps"])
         
         with main_tab1:
