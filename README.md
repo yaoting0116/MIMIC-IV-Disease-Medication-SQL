@@ -24,7 +24,7 @@ This page showcases my analysis results based on data filtered using SQL queries
 
 ## Installation
 
-Ensure you have Python version >= 3.11.2 installed. Then, install the required packages:
+It needs Python version >= 3.11.2.
 
 ```bash
 pip install -r requirements.txt
