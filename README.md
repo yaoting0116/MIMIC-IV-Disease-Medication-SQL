@@ -14,6 +14,7 @@ This webpage provides the necessary MIMIC IV 2.1 data tables related to specific
    - Introduction
    - Disease SQL Examples
    - Drug SQL Examples
+   - Study of Disease & Drug
 2. **Learning SQL:** Refer to the provided SQL examples as a guide for querying and analyzing the MIMIC IV 2.1 dataset.
 3. **Academic Research:** Utilize the information and examples for academic purposes only.
 
