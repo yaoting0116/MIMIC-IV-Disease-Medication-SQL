@@ -1,6 +1,5 @@
 import streamlit as st
 
-# 修改 URL 加上嵌入參數
 redirect_url = "https://mimic-iv-drug-data-analysis-0--introduction-uwu-ting.streamlit.app/?embedded=true"
 
 st.markdown(
