@@ -1,9 +1,8 @@
 import streamlit as st
 
-# Specify the URL you want to redirect to
-redirect_url = "https://mimic-iv-drug-data-analysis-0--introduction-uwu-ting.streamlit.app/"
+# 修改 URL 加上嵌入參數
+redirect_url = "https://mimic-iv-drug-data-analysis-0--introduction-uwu-ting.streamlit.app/?embedded=true"
 
-# Use an HTML meta tag to perform the redirect
 st.markdown(
     f"""
     <meta http-equiv="refresh" content="0; URL={redirect_url}" />
