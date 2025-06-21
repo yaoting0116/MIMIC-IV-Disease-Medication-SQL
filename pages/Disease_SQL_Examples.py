@@ -356,7 +356,7 @@ def show():
         # SQL Step Seven.
         """1.Use GROUP BY subject_id to group records, ensuring no duplicate subject_id.
             \n2.Use MIN(admit_date) to find the earliest admission date.
-            \n3.Use DELETE FROM to remove records in temp_six (case) for psychosis patients.""",
+            \n3.Execute a DELETE FROM command to expunge all patient records related to psychiatric disorders.""",
         # SQL Step Eight.
         """1.Use SELECT *, 'TRUE' AS with_psychosis to add a with_psychosis column with value TRUE (for case group).
             \n2.Use SELECT *, 'FALSE' AS with_psychosis to add a with_psychosis column with value FALSE (for control group).
