@@ -494,6 +494,20 @@ FROM temp_five
 GROUP BY subject_id;
 DELETE FROM temp_seven
 WHERE subject_id IN (SELECT subject_id FROM temp_six);
+DELETE FROM temp_seven
+WHERE subject_id IN (
+SELECT DISTINCT subject_id
+FROM temp_five
+WHERE (icd_version = 10
+AND icd_code IN (
+SELECT icd_code
+FROM all_psychiatric_disorders_icd_codes
+WHERE icd_version = 10))
+OR (icd_version = 9
+AND icd_code IN (
+SELECT icd_code
+FROM all_psychiatric_disorders_icd_codes
+WHERE icd_version = 9)));
 SELECT * FROM temp_seven;""",
         # SQL Step Eight #pgadmin 4 SQL differences
         f"""DROP TABLE IF EXISTS temp_eight;
