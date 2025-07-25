@@ -676,68 +676,100 @@ WHERE T <= 0;
 SELECT * FROM temp_twenty;""",
         # SQL Step Twenty-One
         f"""DROP TABLE IF EXISTS temp_twenty_one;
-CREATE TABLE temp_twenty_one AS
-SELECT subject_id, icd_code, icd_version
+CREATE TEMP TABLE temp_twenty_one AS
+SELECT subject_id,DATE(admittime) AS admit_date,icd_code,icd_version
 FROM mimiciv_hosp.diagnoses_icd
+NATURAL JOIN mimiciv_hosp.admissions
 UNION ALL
-SELECT subject_id, icd_code, icd_version
-FROM mimic_ed.diagnosis;
+SELECT subject_id,DATE(intime) AS admit_date,icd_code,icd_version
+FROM mimic_ed.diagnosis
+NATURAL JOIN mimic_ed.edstays;
 SELECT * FROM temp_twenty_one;""",
         # SQL Step Twenty-Two - Use WITH and LEFT JOIN to consolidate disease counts #pgadmin 4 SQL differences
         f"""DROP TABLE IF EXISTS temp_twenty_two;
 CREATE TABLE temp_twenty_two AS
-WITH t AS (
-SELECT subject_id, icd_code, icd_version 
-FROM temp_twenty_one),
-h AS (
-SELECT subject_id, CAST(COUNT(*) AS INTEGER) AS hypertension_times
-FROM t
-WHERE icd_code IN (SELECT icd_code FROM hypertension_icd_codes)
-AND icd_version IN (9,10)
-GROUP BY subject_id),
-htd AS (
-SELECT subject_id, CAST(COUNT(*) AS INTEGER) AS heart_type_disease_times
-FROM t
-WHERE icd_code IN (SELECT icd_code FROM heart_type_disease_icd_codes)
-AND icd_version IN (9,10)
-GROUP BY subject_id),
-n AS (
-SELECT subject_id, CAST(COUNT(*) AS INTEGER) AS neurological_type_disease_times
-FROM t
-WHERE icd_code IN (SELECT icd_code FROM neurological_type_disease_icd_codes)
-AND icd_version IN (9,10)
-GROUP BY subject_id),
-d AS (
-SELECT subject_id, CAST(COUNT(*) AS INTEGER) AS diabetes_times
-FROM t
-WHERE icd_code IN (SELECT icd_code FROM diabetes_icd_codes)
-AND icd_version IN (9,10)
-GROUP BY subject_id
-),
-l AS (
-SELECT subject_id, CAST(COUNT(*) AS INTEGER) AS hyperlipidemia_times
-FROM t
-WHERE icd_code IN (SELECT icd_code FROM hyperlipidemia_icd_codes)
-AND icd_version IN (9,10)
-GROUP BY subject_id)
-SELECT 
-tt.subject_id,
-COALESCE(h.hypertension_times,0) AS hypertension_times,
-CASE WHEN COALESCE(h.hypertension_times,0) > 0 THEN 'TRUE' ELSE 'FALSE' END AS with_hypertension,
-COALESCE(htd.heart_type_disease_times,0) AS heart_type_disease_times,
-CASE WHEN COALESCE(htd.heart_type_disease_times,0) > 0 THEN 'TRUE' ELSE 'FALSE' END AS with_heart_type_disease,
-COALESCE(n.neurological_type_disease_times,0) AS neurological_type_disease_times,
-CASE WHEN COALESCE(n.neurological_type_disease_times,0) > 0 THEN 'TRUE' ELSE 'FALSE' END AS with_neurological_type_disease,
-COALESCE(d.diabetes_times,0) AS diabetes_times,
-CASE WHEN COALESCE(d.diabetes_times,0) > 0 THEN 'TRUE' ELSE 'FALSE' END AS with_diabetes,
-COALESCE(l.hyperlipidemia_times,0) AS hyperlipidemia_times,
-CASE WHEN COALESCE(l.hyperlipidemia_times,0) > 0 THEN 'TRUE' ELSE 'FALSE' END AS with_hyperlipidemia
-FROM (SELECT subject_id FROM temp_twenty_one GROUP BY subject_id) tt
-LEFT JOIN h  ON tt.subject_id = h.subject_id
-LEFT JOIN htd ON tt.subject_id = htd.subject_id
-LEFT JOIN n  ON tt.subject_id = n.subject_id
-LEFT JOIN d  ON tt.subject_id = d.subject_id
-LEFT JOIN l  ON tt.subject_id = l.subject_id;
+SELECT t.subject_id,
+CASE WHEN SUM(CASE 
+WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM hypertension_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) > 0
+THEN 'TRUE' ELSE 'FALSE'
+END AS with_hypertension,
+SUM(CASE 
+WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM hypertension_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) AS hypertension_times,
+CASE WHEN SUM(CASE 
+WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM heart_type_disease_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) > 0
+THEN 'TRUE' ELSE 'FALSE'
+END AS with_heart_type_disease,
+SUM(CASE 
+WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM heart_type_disease_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) AS heart_type_disease_times,
+CASE WHEN SUM(CASE 
+WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM neurological_type_disease_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) > 0
+THEN 'TRUE' ELSE 'FALSE'
+END AS with_neurological_type_disease,
+SUM(CASE WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM neurological_type_disease_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) AS neurological_type_disease_times,
+CASE WHEN SUM(CASE 
+WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM diabetes_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) > 0
+THEN 'TRUE' ELSE 'FALSE'
+END AS with_diabetes,
+SUM(CASE WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM diabetes_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) AS diabetes_times,
+CASE WHEN SUM(CASE 
+WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM hyperlipidemia_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) > 0
+THEN 'TRUE' ELSE 'FALSE'
+END AS with_hyperlipidemia,
+SUM(CASE WHEN d.admit_date BETWEEN t.index_date AND t.event_date
+AND d.icd_code IN (
+SELECT icd_code 
+FROM hyperlipidemia_icd_codes 
+WHERE icd_version = d.icd_version)
+THEN 1 ELSE 0 END) AS hyperlipidemia_times
+FROM temp_twenty AS t
+LEFT JOIN temp_twenty_one AS d
+ON t.subject_id = d.subject_id
+GROUP BY t.subject_id;
 SELECT * FROM temp_twenty_two;""",
         # SQL Step Twenty-Three
         f"""DROP TABLE IF EXISTS temp_twenty_three;
