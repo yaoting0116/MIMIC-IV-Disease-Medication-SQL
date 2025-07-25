@@ -413,17 +413,16 @@ def show():
             \n3.Finally, select all rows from the newly created temp_twenty_one to verify its contents.""",
         # SQL Step Twenty-Two.
         """1.Create table temp_twenty_two by reading from temp_twenty_one and performing a new SELECT query.
-            \n2.Use the CASE statement to determine whether the patient has a specific disease 
-            and set the value to TRUE or FALSE based on the result.
-            \n3.Use the COALESCE function to replace NULL values in disease counts with 0,
-            preventing errors in subsequent calculations.
-            \n4.Use the SUM function to add up the values returned by the CASE statement, 
-            counting how many times each patient has been diagnosed with a specific disease.
-            \n5.Use the CASE WHEN SUM(disease filtering condition) > 0 THEN TRUE ELSE FALSE 
-            statement for classification, where a result greater than 0 will return TRUE, otherwise FALSE.
-            \n6.Use GROUP BY subject_id to group records.
-            \n7.Use LEFT JOIN to merge the records of each patient,
-            ensuring that even if there is no matching disease record, the patient’s data is retained.""",
+            \n2.Use LEFT JOIN on subject_id so that every patient in temp_twenty is retained,
+            even if they have no matching diagnosis record.
+            \n3.For each disease category, first apply an inner CASE that returns 1 whenever a diagnosis’s admit_date
+            falls between the patient’s index_date and event_date and the icd_code belongs to that category, otherwise 0.
+            \n4.Wrap each of those inner cases in SUM(…) to count how many times each patient met that disease condition,
+            and surround the SUM in COALESCE(…, 0) to turn any NULL (i.e. no matching rows) into 0.
+            \n5.Classify disease presence per patient using(CASE WHEN the count of matching diagnoses > 0 THEN 'TRUE' ELSE 'FALSE' END),
+            where 'TRUE' explicitly means that at least one diagnosis occurred between the patient’s index_date and event_date.
+            \n6.Repeat steps 3–5 for each of the hypertension, heart‑type, neurological, diabetes, and hyperlipidemia ICD code sets.
+            \n7.Group all aggregated results by t.subject_id so that each row represents one patient.""",
         # SQL Step Twenty-Three.
         """1.Create table temp_twenty_three to store the merged data from temp_twenty and temp_twenty_two.
             \n2.Use LEFT JOIN to merge temp_twenty and temp_twenty_two based on subject_id."""
