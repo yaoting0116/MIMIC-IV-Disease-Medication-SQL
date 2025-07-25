@@ -413,8 +413,7 @@ def show():
             \n3.Finally, select all rows from the newly created temp_twenty_one to verify its contents.""",
         # SQL Step Twenty-Two.
         """1.Create table temp_twenty_two by reading from temp_twenty_one and performing a new SELECT query.
-            \n2.Use LEFT JOIN on subject_id so that every patient in temp_twenty is retained,
-            even if they have no matching diagnosis record.
+            \n2.Use LEFT JOIN on subject_id so that every patient in temp_twenty is retained.
             \n3.For each disease category, first apply an inner CASE that returns 1 whenever a diagnosis’s admit_date
             falls between the patient’s index_date and event_date and the icd_code belongs to that category, otherwise 0.
             \n4.Wrap each of those inner cases in SUM(…) to count how many times each patient met that disease condition,
