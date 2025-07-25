@@ -406,8 +406,11 @@ def show():
         """1.Create table temp_twenty to read all records from temp_nineteen.
             \n2.Use DELETE to remove records from temp_twenty where the T column is less than or equal to 0.""",
         # SQL Step Twenty-One.
-        """1.Create table temp_twenty_one to store the subject_id, icd_code, and icd_version columns from hosp + ED.
-            \n2.Use UNION ALL to vertically merge the hosp and ED tables.""",
+        """1.Drop the existing temp_twenty_one table (if any) and create a new temporary table temp_twenty_one
+            to store subject_id, admit_date (as DATE), icd_code and icd_version from both the hospital and ED sources.
+            \n2.Use UNION ALL to vertically merge the two result-sets: one from mimiciv_hosp.diagnoses_icd
+            joined with mimiciv_hosp.admissions, and one from mimic_ed.diagnosis joined with mimic_ed.edstays.
+            \n3.Finally, select all rows from the newly created temp_twenty_one to verify its contents.""",
         # SQL Step Twenty-Two.
         """1.Create table temp_twenty_two by reading from temp_twenty_one and performing a new SELECT query.
             \n2.Use the CASE statement to determine whether the patient has a specific disease 
